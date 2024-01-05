@@ -18,11 +18,18 @@ namespace Minesweeper.Implementation
 
         public Board GenerateBoard()
         {
-            // splitt opp brettdefinisjonen i rader
+            // Split the board definition into rows
             var rows = _boardDefinition.Split(',');
+            int rowCount = rows.Length;
             int expectedColumnCount = rows[0].Length;
 
-            // sjekk hver eneste rad for å se om de har samme antall kolonner
+            // Check if the board definition has at least three rows
+            if (rowCount < 3)
+            {
+                throw new ArgumentException("Board must have at least three rows.");
+            }
+
+            // Check each row to ensure it has the same number of columns
             foreach (var row in rows)
             {
                 if (row.Length != expectedColumnCount)
@@ -31,15 +38,29 @@ namespace Minesweeper.Implementation
                 }
             }
 
-            // miner på brettet
+            // Check for at least one mine in the board definition
             if (!rows.Any(row => row.Contains('m')))
             {
                 throw new ArgumentException("Board must have at least one mine.");
             }
 
-
+            // Count the number of mines and create the Board object
             int mineCount = rows.Sum(row => row.Count(tile => tile == 'm'));
-            return new Board(expectedColumnCount, rows.Length, mineCount);
+            
+            // Create the Board object
+            Board board = new Board(expectedColumnCount, rowCount, mineCount);
+
+            // Populate the board with Tile objects
+            for (int row = 0; row < rowCount; row++)
+            {
+                for (int col = 0; col < expectedColumnCount; col++)
+                {
+                    bool isMine = rows[row][col] == 'm';
+                    board.Tiles[row, col] = new Tile(isMine);
+                }
+            }
+
+            return board;
         }
     }
 }
