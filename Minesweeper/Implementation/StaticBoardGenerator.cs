@@ -10,53 +10,52 @@ namespace Minesweeper.Implementation
 
         public StaticBoardGenerator(string boardDefinition)
         {
+            // check if board definition is null or empty
             if (string.IsNullOrWhiteSpace(boardDefinition))
-                throw new ArgumentException("Board definition cannot be null or empty.");
+                throw new ArgumentException("board definition cannot be null or empty.");
+
+            // split into rows
+            var rows = boardDefinition.Split(',');
+            int rowCount = rows.Length;
+
+            // check for min 3 rows
+            if (rowCount < 3)
+            {
+                throw new ArgumentException("board must have at least three rows.");
+            }
+
+            // check all rows have same number of columns
+            int expectedColumnCount = rows[0].Length;
+            if (rows.Any(row => row.Length != expectedColumnCount))
+            {
+                throw new ArgumentException("board must have equal amount of columns.");
+            }
+
+            // check for at least one mine
+            if (!boardDefinition.Contains('m'))
+            {
+                throw new ArgumentException("board must have at least one mine.");
+            }
 
             _boardDefinition = boardDefinition;
         }
 
         public Board GenerateBoard()
         {
-            // Split the board definition into rows
             var rows = _boardDefinition.Split(',');
             int rowCount = rows.Length;
-            int expectedColumnCount = rows[0].Length;
+            int columnCount = rows[0].Length;
 
-            // Check if the board definition has at least three rows
-            if (rowCount < 3)
-            {
-                throw new ArgumentException("Board must have at least three rows.");
-            }
-
-            // Check each row to ensure it has the same number of columns
-            foreach (var row in rows)
-            {
-                if (row.Length != expectedColumnCount)
-                {
-                    throw new ArgumentException("All rows must have the same number of columns.");
-                }
-            }
-
-            // Check for at least one mine in the board definition
-            if (!rows.Any(row => row.Contains('m')))
-            {
-                throw new ArgumentException("Board must have at least one mine.");
-            }
-
-            // Count the number of mines and create the Board object
+            // count mines and create board
             int mineCount = rows.Sum(row => row.Count(tile => tile == 'm'));
-            
-            // Create the Board object
-            Board board = new Board(expectedColumnCount, rowCount, mineCount);
+            Board board = new Board(columnCount, rowCount, mineCount);
 
-            // Populate the board with Tile objects
+            // populate tiles
             for (int row = 0; row < rowCount; row++)
             {
-                for (int col = 0; col < expectedColumnCount; col++)
+                for (int col = 0; col < columnCount; col++)
                 {
-                    bool isMine = rows[row][col] == 'm';
-                    board.Tiles[row, col] = new Tile(isMine);
+                    board.Tiles[row, col] = new Tile(rows[row][col] == 'm');
                 }
             }
 
