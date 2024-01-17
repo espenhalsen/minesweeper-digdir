@@ -10,9 +10,10 @@ namespace Minesweeper.Implementation
 
         public StaticBoardGenerator(string boardDefinition)
         {
+            
             // check if board definition is null or empty
-            if (string.IsNullOrWhiteSpace(boardDefinition))
-                throw new ArgumentException("board definition cannot be null or empty.");
+            if (string.IsNullOrEmpty(boardDefinition))
+                throw new ArgumentException("Board definition cannot be null or empty.");
 
             // split into rows
             var rows = boardDefinition.Split(',');
@@ -21,23 +22,32 @@ namespace Minesweeper.Implementation
             // check for min 3 rows
             if (rowCount < 3)
             {
-                throw new ArgumentException("board must have at least three rows.");
+                throw new ArgumentException("Board must have at least three rows.");
             }
 
             // check all rows have same number of columns
             int expectedColumnCount = rows[0].Length;
             if (rows.Any(row => row.Length != expectedColumnCount))
             {
-                throw new ArgumentException("board must have equal amount of columns.");
+                throw new ArgumentException("Board must have equal amount of columns.");
+            }
+            if (expectedColumnCount < 3)
+            {
+                throw new ArgumentException("Board must have at least three columns.");
             }
 
             // check for at least one mine
-            if (!boardDefinition.Contains('m'))
-            {
-                throw new ArgumentException("board must have at least one mine.");
-            }
+            AssertToAtLeastOneMine(boardDefinition);
 
             _boardDefinition = boardDefinition;
+        }
+
+        private static void AssertToAtLeastOneMine(string boardDefinition)
+        {
+            if (!boardDefinition.Contains('m'))
+            {
+                throw new ArgumentException("Board must have at least one mine.");
+            }
         }
 
         public Board GenerateBoard()
