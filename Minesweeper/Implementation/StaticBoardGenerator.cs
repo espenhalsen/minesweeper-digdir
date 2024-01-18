@@ -31,12 +31,13 @@ namespace Minesweeper.Implementation
             {
                 throw new ArgumentException("Board must have equal amount of columns.");
             }
+            //TODO: should use private readonly for magic numbers
             if (expectedColumnCount < 3)
             {
                 throw new ArgumentException("Board must have at least three columns.");
             }
 
-            // check for at least one mine
+
             AssertToAtLeastOneMine(boardDefinition);
 
             _boardDefinition = boardDefinition;
@@ -61,11 +62,11 @@ namespace Minesweeper.Implementation
             Board board = new Board(columnCount, rowCount, mineCount);
 
             // populate tiles
-            for (int row = 0; row < rowCount; row++)
+            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
             {
-                for (int col = 0; col < columnCount; col++)
+                for (int colIndex = 0; colIndex < columnCount; colIndex++)
                 {
-                    board.Tiles[row, col] = new Tile(rows[row][col] == 'm');
+                    board.Tiles[rowIndex, colIndex] = new Tile(rows[rowIndex][colIndex] == 'm');
                 }
             }
 
