@@ -7,6 +7,7 @@ namespace Minesweeper.Implementation
     public class StaticBoardGenerator : IBoardGenerator
     {
         private readonly string _boardDefinition;
+        private readonly int rowCountNumber = 3;
 
         public StaticBoardGenerator(string boardDefinition)
         {
@@ -20,7 +21,7 @@ namespace Minesweeper.Implementation
             int rowCount = rows.Length;
 
             // check for min 3 rows
-            if (rowCount < 3)
+            if (rowCount < rowCountNumber)
             {
                 throw new ArgumentException("Board must have at least three rows.");
             }
@@ -31,8 +32,8 @@ namespace Minesweeper.Implementation
             {
                 throw new ArgumentException("Board must have equal amount of columns.");
             }
-            //TODO: should use private readonly for magic numbers
-            if (expectedColumnCount < 3)
+
+            if (expectedColumnCount <  rowCountNumber)
             {
                 throw new ArgumentException("Board must have at least three columns.");
             }
