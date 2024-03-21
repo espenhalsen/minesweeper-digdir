@@ -1,4 +1,4 @@
-﻿namespace Minesweeper.Models;
+﻿﻿namespace Minesweeper.Models;
 
 public class Board
 {
@@ -76,7 +76,10 @@ public class Board
             GameWon = true;
         }
     }
-
+    public void PlaceMine(int row, int column)
+    {
+        Tiles[row,column].IsMine = true;
+    }
     private void RevealAdjacentTiles((int Row, int Column)[] adjacentTileReferences)
     {
     foreach ((int Row, int Column) tileReference in adjacentTileReferences)

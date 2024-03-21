@@ -11,7 +11,6 @@ public class Player : IPlayer
         Id = Guid.NewGuid();
     }
 
-    {}
 
 
     public Guid Id { get; }

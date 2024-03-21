@@ -1,90 +1,61 @@
-﻿using Minesweeper.Models;
-
-using System;
-
+﻿﻿using Minesweeper.Models;
 
 namespace Minesweeper;
 
 public class Game
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
+    public DateTime? StartTime { get; private set; } = null;
+    public DateTime? EndTime { get; private set; } = null;
+    public IPlayer Player { get; set; }
 
-    public DateTime? StartTime { get; private set; }
-    public DateTime? EndTime { get; private set; }
-    public IPlayer Player { get; private set; }
-    private Board _board { get; set; }
-    private bool _isFirstTileRevealed { get; set; } = false;
+    private bool IsFirstTileRevealed { get; set; } = false;
+    public Board _board { get; set; }
+    public Board? Board { get; set; }
+    public int Rows { get; private set; }
+    public int Columns { get; private set; }
 
     public Game(IBoardGenerator boardGenerator, IPlayer player)
     {
         _board = boardGenerator.GenerateBoard();
         Player = player;
-
-    public DateTime? StartTime { get; private set; } = null;
-    public DateTime? EndTime { get; private set; } = null;
-    public IPlayer Player { get; set; }
-    public Board Board { get; set; }
-
-    public Game(IBoardGenerator boardGenerator, IPlayer player)
+        Rows = _board.Rows;
+        Columns = _board.Columns;
+    }
+    public void RevealTile_FirstTile_ShouldStartTimer()
     {
-        throw new NotImplementedException();
-
+        StartTime = DateTime.Now;
     }
 
     public void RevealTile(int row, int column)
     {
-
-        if (!_isFirstTileRevealed)
+        if (IsFirstTileRevealed == false)
         {
-            StartTime = DateTime.Now;
-            _isFirstTileRevealed = true;
+            RevealTile_FirstTile_ShouldStartTimer();
+            IsFirstTileRevealed = true;
         }
-
-        var tile = _board.Tiles[row, column];
-        if (tile.IsMine)
+        if (_board.Tiles[row, column].IsMine)
         {
             EndTime = DateTime.Now;
             throw new MineExplodedException();
         }
-
         _board.RevealTile(row, column);
-
-        throw new NotImplementedException();
-
     }
 
     public void FlagTile(int row, int column)
     {
-
         _board.FlagTile(row, column);
-        if (_board.GameWon)
-        {
-            EndTime = DateTime.Now;
-        }
-
-        throw new NotImplementedException();
-
     }
-
-    public double GetSecondsUsed()
-    {
-
-        if (!StartTime.HasValue) return 0;
-        var endTime = EndTime ?? DateTime.Now;
-        return (endTime - StartTime.Value).TotalSeconds;
-    }
-}
-
-public class MineExplodedException : Exception
-{
-    public MineExplodedException() : base("A mine has been revealed!") { }
-
-        throw new NotImplementedException();
-    }
-
     public void UnflagTile(int row, int column)
     {
-        throw new NotImplementedException();
+        _board.UnflagTile(row, column);
     }
-
+ 
+public double GetSecondsUsed()
+{
+        DateTime now = DateTime.Now;
+        DateTime _startTime = StartTime ?? DateTime.MinValue;
+        double seconds = (now - _startTime).TotalSeconds;
+        return seconds;
+}
 }
