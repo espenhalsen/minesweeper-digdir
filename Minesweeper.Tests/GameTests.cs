@@ -1,4 +1,4 @@
-﻿﻿﻿using FluentAssertions;
+﻿using FluentAssertions;
 using Minesweeper.Implementation;
 
 namespace Minesweeper.Tests;

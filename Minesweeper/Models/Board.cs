@@ -1,5 +1,8 @@
-﻿﻿namespace Minesweeper.Models;
+﻿namespace Minesweeper.Models;
 
+/// <summary>
+/// This class represents a Minesweeper board.
+/// </summary>
 public class Board
 {
     public Board() {}
@@ -80,6 +83,7 @@ public class Board
     {
         Tiles[row,column].IsMine = true;
     }
+
     private void RevealAdjacentTiles((int Row, int Column)[] adjacentTileReferences)
     {
     foreach ((int Row, int Column) tileReference in adjacentTileReferences)

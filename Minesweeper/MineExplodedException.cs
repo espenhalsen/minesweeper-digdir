@@ -1,4 +1,4 @@
-namespace Minesweeper;
+﻿namespace Minesweeper;
 
 public class MineExplodedException : Exception
 {

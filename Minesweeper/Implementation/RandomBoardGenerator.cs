@@ -21,7 +21,7 @@ public class RandomBoardGenerator : IBoardGenerator
                 case Level.Beginner:
                     _rows = 9;
                     _columns = 9;
-                    _mines = 10;
+                    _mines = 3;
                     break;
                 case Level.Intermediate:
                     _rows = 18;
@@ -31,7 +31,7 @@ public class RandomBoardGenerator : IBoardGenerator
                 case Level.Expert:
                     _rows = 60;
                     _columns = 60;
-                    _mines = 90;
+                    _mines = 99;
                     break;
         }
         
