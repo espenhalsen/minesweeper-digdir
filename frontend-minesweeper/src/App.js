@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
 import winner from './winner.gif';
@@ -10,22 +10,32 @@ function App() {
   const [level, setLevel] = useState(0);
   const [gameId, setGameId] = useState(null);
   const [gameWon, setGameWon] = useState(false);
-  const [gameOver, setGameOver] = useState(false);  
+  const [gameOver, setGameOver] = useState(false);
   const [time, setTime] = useState(0);
   const [timerOn, setTimerOn] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const intervalRef = useRef(null);
 
   const API_HOST = 'http://localhost:5008';
   const gameSettings = [
-    { rows: 9, columns: 9, mines: 3 },
+    { rows: 9, columns: 9, mines: 5 },
     { rows: 18, columns: 18, mines: 15 },
     { rows: 60, columns: 60, mines: 99 },
   ];
 
   useEffect(() => {
-    const timer = timerOn && setInterval(() => setTime(time + 1), 1000);
-    return () => clearInterval(timer);
-  }, [timerOn, time]);
+    if (timerOn && !intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setTime(time => time + 1);
+      }, 1000);
+    }
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [timerOn]);
 
   useEffect(() => {
     createNewGame();
@@ -33,23 +43,32 @@ function App() {
 
   useEffect(() => {
     checkVictory();
-    if (apiResponse && apiResponse.gameWon) {
-      console.log('Du vant!'); }
-    if (apiResponse && apiResponse.mineExploded) {
-      console.log('Spillet er over');
-      setGameOver(true);
-      setTimerOn(false);
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 1000); 
-      const updatedTiles = tileData.map(tile => ({
-        ...tile,
-        isRevealed: tile.mine ? true : tile.isRevealed
-      }));
-      setTileData(updatedTiles);
+    if (apiResponse) {
+      if (apiResponse.gameWon) {
+        console.log('Du vant!');
+        setGameOver(false);
+        setTimerOn(false);
+        setShowPopup(true);
+        setTimeout(() => setShowPopup(false), 1000);
+      }
+      if (apiResponse.mineExploded) {
+        console.log('Spillet er over');
+        setGameOver(true);
+        setTimerOn(false);
+        setShowPopup(true);
+        setTimeout(() => setShowPopup(false), 1000); 
+        const updatedTiles = tileData.map(tile => ({
+          ...tile,
+          isRevealed: tile.mine ? true : tile.isRevealed
+        }));
+        setTileData(updatedTiles);
+      }
     }
   }, [apiResponse]);
 
   const createNewGame = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
     setApiResponse(null);
     setGameWon(false);
     setGameOver(false);
@@ -90,11 +109,7 @@ function App() {
   };
 
   const checkVictory = () => {
-    const totalTiles = gameSettings[level].rows * gameSettings[level].columns;
-    const totalMines = gameSettings[level].mines;
-    const revealedTiles = tileData.filter(tile => tile.isRevealed).length;
-
-    if (revealedTiles === totalTiles - totalMines) {
+    if (apiResponse?.gameWon) {
       setGameWon(true);
       setTimerOn(false);
     }
@@ -141,12 +156,10 @@ function App() {
           </div>
           {showPopup && (
             <div className="popup">
-              <img src={gameOver ? explode : winner} height="600vh"alt='' /
->
+              <img src={gameOver ? explode : winner} height="600vh" alt='' />
             </div>
           )}
         </div>
-
       </header>
     </div>
   );
