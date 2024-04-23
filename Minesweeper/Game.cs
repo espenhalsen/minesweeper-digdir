@@ -36,6 +36,19 @@ public class Game
         if (_board.Tiles[row, column].IsMine)
         {
             EndTime = DateTime.Now;
+            _board.Tiles[row, column].Exploded = true;
+
+        for (int i = 0; i < _board.Rows; i++)
+        {
+            for (int j = 0; j < _board.Columns; j++)
+            {
+                if (_board.Tiles[i, j].IsMine)
+                {
+                    _board.Tiles[i, j].Exploded = true;
+                }
+            }
+        }
+
             throw new MineExplodedException();
         }
         _board.RevealTile(row, column);

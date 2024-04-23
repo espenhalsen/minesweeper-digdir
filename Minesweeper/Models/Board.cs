@@ -33,6 +33,7 @@ public class Board
         if (CorrectlyFlaggedTiles == Mines)
         {
             GameWon = true;
+            MakeAllTiles(flag: true);
         }
     }
 
@@ -65,6 +66,29 @@ public class Board
             RevealAdjacentTiles(adjacentTileReferences);
 
     }
+    private void MakeAllTiles(bool flag)
+    {
+        for (int row = 0; row < Rows; row++)
+        {
+            for (int column = 0; column < Columns; column++)
+            {
+                if (flag)
+                {
+                    if (!Tiles[row, column].IsRevealed)
+                    {
+                    Tiles[row, column].IsRevealed = true;
+                    }
+                }
+                else
+                {
+                    if (!Tiles[row, column].IsRevealed)
+                    {
+                        Tiles[row, column].IsFlagged = true;
+                    }
+                }
+            }
+        }
+    }
 
     private int totalTiles()
     {
@@ -77,6 +101,7 @@ public class Board
         if (unrevealedTiles == Mines)
         {
             GameWon = true;
+            MakeAllTiles(false);
         }
     }
     public void PlaceMine(int row, int column)

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Minesweeper.Api.Mappers;
 using Minesweeper.Api.Models;
+using Minesweeper.Models;
 
 namespace Minesweeper.Api.Controllers;
 [ApiController]
@@ -64,7 +65,7 @@ public class GameController : ControllerBase
         try
         {
             if (moveRequest.Move == Move.Flag)
-            {   
+            {
                 game.FlagTile(moveRequest.Row, moveRequest.Column);
             }
             else if (moveRequest.Move == Move.Unflag)
@@ -83,9 +84,8 @@ public class GameController : ControllerBase
         
         GameResponse gameResponse = new GameToGameResponse().Map(game);
         gameResponse.MineExploded = mineExploded;
+        gameResponse.GameWon = game._board.GameWon;
         _gameManager.SaveGame(game);
-        
         return gameResponse;
     }
 }
-
