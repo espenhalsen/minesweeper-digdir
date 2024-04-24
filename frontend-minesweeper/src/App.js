@@ -97,15 +97,19 @@ function App() {
       return;
     }
     const MoveData = { row, column, move };
-    axios.put(`${API_HOST}/games/${gameId}`, MoveData)
+      axios.put(`${API_HOST}/games/${gameId}`, MoveData)
       .then(response => {
         setApiResponse(response.data);
         if (response.data.board && response.data.board.tiles) {
+          
           setTileData(response.data.board.tiles);
         }
         checkVictory();
       })
+    
       .catch(error => console.error("Feil ved oppdatering av flis:", error));
+    
+
   };
 
   const checkVictory = () => {
@@ -143,9 +147,11 @@ function App() {
             {tileData.map((tile, index) => (
               <div key={index}
                 onMouseDown={e => {
+                  if (!tile.isRevealed && !gameWon && !gameOver) {
                   e.preventDefault();
                   const move = e.button === 2 ? (tile.isFlagged ? 2 : 1) : 0;
                   handleTileAction(tile.row, tile.col, move);
+                }
                 }}
                 onContextMenu={e => e.preventDefault()}
                 className={`tile ${tile.exploded ? 'exploded' : ''} ${tile.isFlagged ? 'flagged' : ''} ${tile.isRevealed ? 'revealed' : ''}`}
