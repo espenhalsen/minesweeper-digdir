@@ -19,8 +19,8 @@ function App() {
   const API_HOST = 'http://localhost:5008';
   const gameSettings = [
     { rows: 9, columns: 9, mines: 5 },
-    { rows: 18, columns: 18, mines: 15 },
-    { rows: 60, columns: 60, mines: 99 },
+    { rows: 16, columns: 16, mines: 15 },
+    { rows: 3, columns: 60, mines: 99 },
   ];
 
   useEffect(() => {
